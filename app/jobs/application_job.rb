@@ -4,12 +4,4 @@ class ApplicationJob < ActiveJob::Base
 
   # Most jobs are safe to ignore if the underlying records are no longer available
   # discard_on ActiveJob::DeserializationError
-  class Archive
-    @queue = :file_serve
-
-    def self.perform(msg)
-      puts "Archiving"
-      puts msg
-    end
-  end
 end
