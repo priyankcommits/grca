@@ -5,8 +5,8 @@
 #   git config --global core.excludesfile '~/.gitignore_global'
 
 # Ignore bundler config.
+.DS_Store
 /.bundle
-
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-*
@@ -38,3 +38,4 @@
 !/app/assets/builds/.keep
 
 /node_modules
+*.pdf
