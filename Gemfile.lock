@@ -237,6 +237,7 @@ DEPENDENCIES
   debug
   jbuilder
   jsbundling-rails
+  msgpack (~> 1.7)
   numo-narray
   pdf-reader (~> 1.4.1)
   puma (~> 5.0)
@@ -245,7 +246,7 @@ DEPENDENCIES
   ruby-openai (~> 3.7)
   selenium-webdriver
   sprockets-rails
-  sqlite3 (~> 1.4)
+  sqlite3
   stimulus-rails
   tailwindcss-rails (~> 2.0)
   turbo-rails

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'book_embeddings/create'
   get 'book/create'
   get 'home/index'
   get 'home/about'

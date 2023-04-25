@@ -1,11 +1,15 @@
 class Book < ApplicationRecord
   attribute :name, :string
-  attribute :embeddings, :text
+  attribute :cover, :text
+  attribute :is_active, :boolean, default: true
+  attribute :status, :string, default: 'pending'
+  has_many :book_embeddings
+  has_many :book_questions
 
-  def self.create_book(name, embeddings)
+  def self.create_book(name, cover)
     book = Book.new
     book.name = name
-    book.embeddings = embeddings
+    book.cover = cover
     book.save
   end
 
