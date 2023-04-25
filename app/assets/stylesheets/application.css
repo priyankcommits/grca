@@ -14,6 +14,6 @@
  *= require_self
  */
 
- .text-custom {
-  color: green;
- }
+html, body {
+  font-family: 'Mabry pro', sans-serif;
+}

@@ -11,6 +11,11 @@ class Book < ApplicationRecord
     book.name = name
     book.cover = cover
     book.save
+    return book
+  end
+
+  def self.get_books
+    Book.all
   end
 
   def self.get_book(book_id)

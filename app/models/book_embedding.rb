@@ -3,10 +3,11 @@ class BookEmbedding < ApplicationRecord
   attribute :pages, :text
   belongs_to :book
 
-  def self.create_book_embeddings(pages, embeddings)
+  def self.create_book_embeddings(pages, embeddings, book_id)
     book_emb = BookEmbedding.new
     book_emb.pages = pages
     book_emb.embeddings = embeddings
+    book_emb.book_id = book_id
     book_emb.save
   end
 

@@ -14,9 +14,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_135446) do
   create_table "book_embeddings", force: :cascade do |t|
     t.text "pages"
     t.text "embeddings"
-    t.text "cover"
-    t.boolean "is_active", default: true
-    t.string "status", default: "pending"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "book_id"
@@ -35,7 +32,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_135446) do
 
   create_table "books", force: :cascade do |t|
     t.string "name"
-    t.text "embeddings"
+    t.text "cover"
+    t.boolean "is_active", default: true
+    t.string "status", default: "pending"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

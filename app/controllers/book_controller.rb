@@ -1,5 +1,4 @@
 require 'pdf-reader'
-require 'openai'
 require 'numo/narray'
 
 OpenAI.configure do |config|
@@ -11,40 +10,35 @@ class BookController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def create
-    file = params[:file]
+    cover = params[:cover] if params[:cover].present? || nil
+    file = params[:file] if params[:file].present? || nil
     book_name = params[:name]
-    puts file.path
-    puts book_name
-    reader = PDF::Reader.new(file.path)
-
-    client = OpenAI::Client.new(
-      access_token: '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'
-    )
-    # Extract text from the PDF
-    embeddings = []
-    reader.pages.each do |page|
-      puts page.text.split.take(2046).join(" ")
-      embedding = client.embeddings(
-        parameters: {
-            model: "text-search-curie-doc-001",
-            input: page.text.split.take(2046).join(" ")
-        }
-      )
-      puts embedding["data"][0]["embedding"].length
-      embeddings << embedding["data"][0]["embedding"]
+    if cover
+      cover_base64 = Base64.encode64(cover.read)
+    else
+      cover_base64 = nil
     end
-    json_embeddings = embeddings.to_json
-    Book.create_book(book_name, json_embeddings)
-    msg = {:status => "success", :message => "Book uploaded successfully, now processing."}
-    render :json => msg
+    reader = PDF::Reader.new(file.path)
+    book = Book.create_book(book_name, cover_base64)
+    book_id = book.id
+    pages_text = []
+    reader.pages.each do |page|
+      pages_text << page.text
+    end
+    data = {:book_id => book_id, :pages => pages_text }
+    BookProcessJob.perform_later data
+    render :json => {:message => "Book uploaded successfully, now processing.", :book_id => book_id }
+  end
+
+  def get_books
+    books = Book.get_books
+    render :json => books
   end
 
   def query_book
     book = Book.get_book(21)
     embeddings = JSON.parse(book.embeddings)
     query = params[:query]
-    puts book.name
-    puts query
     client = OpenAI::Client.new(
       access_token: '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'
     )
@@ -57,7 +51,6 @@ class BookController < ApplicationController
     )
     input = input_embedding["data"][0]["embedding"]
     similarity_scores = []
-    puts embeddings.length
     embeddings.each do |embedding|
       score = (Numo::NArray[input] * (Numo::NArray[embedding])).sum
       similarity_scores << score
