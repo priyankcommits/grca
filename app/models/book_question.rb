@@ -14,8 +14,10 @@ class BookQuestion < ApplicationRecord
   end
 
   def self.question_asked(book_id, query)
+    is_new_question = false
     book_question = BookQuestion.get_book_question_by_content(book_id, query)
     if book_question.nil?
+      is_new_question = true
       book_question = BookQuestion.create_book_question(book_id, query)
     else
       book_question.ask_count += 1
@@ -25,6 +27,7 @@ class BookQuestion < ApplicationRecord
     if question_count > @@max_questions
       BookQuestion.remove_least_asked_question(book_id)
     end
+    return book_question, is_new_question
   end
 
   def self.formatted_content(content)
@@ -48,6 +51,7 @@ class BookQuestion < ApplicationRecord
     book_question.content = formatted_content
     book_question.book_id = book_id
     book_question.save
+    book_question
   end
 
   def self.get_book_question_by_content(book_id, content)

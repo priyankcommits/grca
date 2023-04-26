@@ -1,5 +1,6 @@
 require 'pdf-reader'
 require 'numo/narray'
+require 'tokenizers'
 
 class BookController < ApplicationController
   protect_from_forgery with: :null_session
@@ -62,31 +63,68 @@ class BookController < ApplicationController
   def query_book
     book = Book.get_book(params[:id])
     query = params[:query]
-    puts query
-    puts book.id
-    BookQuestion.question_asked(book.id, query)
-    render :json => {:message => "Book queried successfully some text here man."}
-    # wip
-    # embeddings = JSON.parse(book.embeddings)
-    # client = OpenAI::Client.new(
-    #   access_token: ENV['OPENAI_API_KEY'],
-    # )
-    # Query the embedding using input text
-    # input_embedding = client.embeddings(
-    #   parameters: {
-    #       model: "text-search-curie-query-001",
-    #       input: query.split.take(2046)
-    #   }
-    # )
-    # input = input_embedding["data"][0]["embedding"]
-    # similarity_scores = []
-    # embeddings.each do |embedding|
-    #   score = (Numo::NArray[input] * (Numo::NArray[embedding])).sum
-    #   similarity_scores << score
-    # end
-    # most_similar_index = similarity_scores.each_with_index.max[1]
-    # puts most_similar_index
+    unless query[-1] == '?'
+      query += '?'
     end
+    book_embeddings = BookEmbedding.get_book_emb(book.id)
+    embeddings = JSON.parse(book_embeddings.embeddings)
+    book_question, is_new_question = BookQuestion.question_asked(book.id, query)
+    unless is_new_question
+      return render :json => {:answer => book_question.answer }
+    end
+    client = OpenAI::Client.new(
+      access_token: ENV['OPENAI_API_KEY'],
+    )
+    tokenizer = Tokenizers.from_pretrained("gpt2")
+    # Query the embedding using input text
+    input_embedding = client.embeddings(
+      parameters: {
+          model: "text-search-curie-query-001",
+          input: tokenizer.encode(query).tokens.take(2046).join(" ")
+      }
+    )
+    input = input_embedding["data"][0]["embedding"]
+    similarity_scores = []
+    embeddings.each do |embedding|
+      if embedding.length != 4096
+        similarity_scores << 0
+        next
+      end
+      score = (Numo::NArray[input] * (Numo::NArray[embedding])).sum
+      similarity_scores << score
+    end
+    pages = JSON.parse(book_embeddings.pages).take(10)
+    # order pages based on similarity score index
+    similarity_scores = similarity_scores.map.with_index.sort.map(&:last)
+    # reverse the order
+    similarity_scores = similarity_scores.reverse
+    # get the pages in the order of similarity scores
+    pages = pages.values_at(*similarity_scores)
+    pages_text = pages.join(" ")
+
+    query_length = query.bytesize
+
+    max_bytes = 4090 - query_length
+    truncated_page_text = pages_text[0..max_bytes]
+
+    answer = client.completions(
+      parameters: {
+        model: "text-davinci-003",
+        prompt: truncated_page_text + "." + query,
+        temperature: 0.0,
+      }
+    )
+    if answer.key?("error")
+      render :json => {:answer => "Sorry, I don't know the answer to that question." }
+    else
+      answer = answer["choices"][0]["text"]
+      answer = answer.gsub("\n", " ")
+      answer = answer.gsub("b. ", " ")
+      answer = answer.strip
+      book_question.update(answer: answer)
+      render :json => {:answer => answer }
+    end
+  end
 
     def query_book_lucky
       question = BookQuestion.get_question(params[:id])

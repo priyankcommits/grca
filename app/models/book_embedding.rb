@@ -11,7 +11,7 @@ class BookEmbedding < ApplicationRecord
     book_emb.save
   end
 
-  def self.get_book_emb(book_emb_id)
-    BookEmbedding.where(id: book_emb_id).first
+  def self.get_book_emb(book_id)
+    BookEmbedding.where(book_id: book_id).first
   end
 end
