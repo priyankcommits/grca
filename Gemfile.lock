@@ -142,6 +142,7 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
+    pg (1.5.2)
     public_suffix (5.0.1)
     puma (5.6.5)
       nio4r (~> 2.0)
@@ -240,6 +241,7 @@ DEPENDENCIES
   msgpack (~> 1.7)
   numo-narray
   pdf-reader (~> 1.4.1)
+  pg
   puma (~> 5.0)
   rails (~> 7.0.4, >= 7.0.4.3)
   redis (~> 4.0)
