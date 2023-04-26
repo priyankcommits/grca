@@ -15,6 +15,6 @@
   },
   "scripts": {
     "build:dev": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets",
-    "build": "esbuild app/javascript/*.* --define:process.env.NODE_ENV=\\\"production\\\" --bundle --outdir=app/assets/builds --public-path=assets"
+    "build": "esbuild app/javascript/*.* --define:process.env.NODE_ENV=\\\"production\\\" --bundle --minify --outdir=app/assets/builds --public-path=assets"
   }
 }
