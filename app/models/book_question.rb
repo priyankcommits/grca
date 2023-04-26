@@ -2,7 +2,30 @@ class BookQuestion < ApplicationRecord
   attribute :display, :text
   attribute :content, :text
   attribute :ask_count, :integer, default: 1
+  attribute :answer, :text, default: "Sorry I don't know the answer to that question."
   belongs_to :book
+
+  @@max_questions = 5
+
+  def self.get_question(book_id)
+    question_count = BookQuestion.where(book_id: book_id).count
+    random_index = rand(question_count)
+    BookQuestion.where(book_id: book_id).offset(random_index).first
+  end
+
+  def self.question_asked(book_id, query)
+    book_question = BookQuestion.get_book_question_by_content(book_id, query)
+    if book_question.nil?
+      book_question = BookQuestion.create_book_question(book_id, query)
+    else
+      book_question.ask_count += 1
+      book_question.save
+    end
+    question_count = BookQuestion.where(book_id: book_id).count
+    if question_count > @@max_questions
+      BookQuestion.remove_least_asked_question(book_id)
+    end
+  end
 
   def self.formatted_content(content)
     # lower case content
@@ -18,36 +41,22 @@ class BookQuestion < ApplicationRecord
     formatted_content
   end
 
-  def self.create_book_question(content)
+  def self.create_book_question(book_id, content)
     formatted_content = BookQuestion.formatted_content(content)
     book_question = BookQuestion.new
     book_question.display = content
     book_question.content = formatted_content
+    book_question.book_id = book_id
     book_question.save
   end
 
-  def self.get_book_question(book_question_id)
-    BookQuestion.where(id: book_question_id).first
-  end
-
-  def self.get_book_question_by_content(content)
+  def self.get_book_question_by_content(book_id, content)
     formatted_content = BookQuestion.formatted_content(content)
-    BookQuestion.where(content: formatted_content).first
+    BookQuestion.where(book_id: book_id, content: formatted_content).first
   end
 
-  def self.update_ask_count(content)
-    formatted_content = BookQuestion.formatted_content(content)
-    book_question = BookQuestion.where(content: content).first
-    if book_question.nil?
-      book_question = BookQuestion.create_book_question(content)
-    else
-      book_question.ask_count += 1
-      book_question.save
-    end
-  end
-
-  def self.remove_least_asked_book_question
-    book_question = BookQuestion.order(:ask_count, :created_at).first
+  def self.remove_least_asked_question(book_id)
+    book_question = BookQuestion.where(book_id: book_id).order(:ask_count, :created_at).first
     book_question.destroy
   end
 end

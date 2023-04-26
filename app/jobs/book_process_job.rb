@@ -6,7 +6,7 @@ class BookProcessJob < ApplicationJob
   def perform(data)
     begin
       client = OpenAI::Client.new(
-        access_token: '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'
+        access_token: ENV['OPENAI_API_KEY'],
       )
       # Extract text from the PDF
       embeddings = []
@@ -17,7 +17,6 @@ class BookProcessJob < ApplicationJob
               input: page.split.take(2046).join(" ")
           }
         )
-        puts embedding["data"][0]["embedding"].length
         embeddings << embedding["data"][0]["embedding"]
       end
       json_embeddings = embeddings.to_json

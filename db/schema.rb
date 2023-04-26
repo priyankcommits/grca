@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_25_135446) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_26_193639) do
   create_table "book_embeddings", force: :cascade do |t|
     t.text "pages"
     t.text "embeddings"
@@ -27,6 +27,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_135446) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "book_id"
+    t.text "answer", default: "Sorry I don't know the answer to that question."
     t.index ["book_id"], name: "index_book_questions_on_book_id"
   end
 

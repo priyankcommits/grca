@@ -16,27 +16,34 @@ const Admin = () => {
   const [state, setState] = useState(initialState)
 
   const getBooks = async () => {
-    setState({ ...state, loading: true })
+    setState((ps) => ({ ...ps, loading: true }))
     try {
       const response = await getAllBooks()
       setBooks(response)
     } catch (error) {
       setToast([{ message: error, type: 'error' }])
     } finally {
-      setState({ ...state, loading: false })
+      setState((ps) => ({ ...ps, loading: false }))
     }
   }
 
   useEffect(() => {
     getBooks()
+    return () => {
+      setBooks([])
+      setToast([])
+    }
   }, [])
 
   const handleSubmit = async () => {
     if (!state.name?.trim() || !state.file) {
-      setState({ ...state, error: 'Please fill all the required fields' })
+      setState((ps) => ({
+        ...ps,
+        error: 'Please fill all the required fields',
+      }))
       return
     }
-    setState({ ...state, loading: true })
+    setState((ps) => ({ ...ps, loading: true }))
     try {
       const response = await createBook(state)
       setToast([{ message: response.message, type: 'success' }])
@@ -46,20 +53,25 @@ const Admin = () => {
       setShowModal(false)
       setToast([{ message: error, type: 'error' }])
     } finally {
-      setState({ ...state, loading: false })
+      setState((ps) => ({ ...ps, loading: false }))
     }
   }
 
   const onBookUpload = (e) => {
     if (!e.target.files[0]) return
     const file = e.target.files[0]
-    setState({ ...state, file })
+    setState((ps) => ({ ...ps, file }))
   }
 
   const onCoverUpload = (e) => {
     if (!e.target.files[0]) return
     const cover = e.target.files[0]
-    setState({ ...state, cover })
+    const reader = new FileReader()
+    reader.readAsDataURL(cover)
+    reader.onload = () => {
+      const coverBase64 = reader.result
+      setState((ps) => ({ ...ps, cover: coverBase64 }))
+    }
   }
 
   return (
@@ -97,7 +109,7 @@ const Admin = () => {
       <div className="mt-5 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1 p-1">
         {books.map((book) => (
           <div className="w-full" key={book.id}>
-            <Book book={book} />
+            <Book bookUpdated={getBooks} type="admin" book={book} />
           </div>
         ))}
       </div>
@@ -121,7 +133,9 @@ const Admin = () => {
                 type="text"
                 placeholder="Book Name"
                 className="w-full px-3 py-2 placeholder-gray-400 border border-black focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                onChange={(e) => setState({ ...state, name: e.target.value })}
+                onChange={(e) =>
+                  setState((ps) => ({ ...ps, name: e.target.value }))
+                }
               />
               <label
                 htmlFor="file-upload"
@@ -168,7 +182,7 @@ const Admin = () => {
                 htmlFor="file-upload"
                 className="mt-2 block text-gray-700 font-bold mb-2"
               >
-                Upload a cover htmlFor the book
+                Upload a cover for the book
               </label>
               <div className="relative border-dashed border-2 border-gray-400 p-4">
                 <input
