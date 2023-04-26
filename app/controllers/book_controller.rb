@@ -93,7 +93,7 @@ class BookController < ApplicationController
       score = (Numo::NArray[input] * (Numo::NArray[embedding])).sum
       similarity_scores << score
     end
-    pages = JSON.parse(book_embeddings.pages).take(10)
+    pages = JSON.parse(book_embeddings.pages)
     # order pages based on similarity score index
     similarity_scores = similarity_scores.map.with_index.sort.map(&:last)
     # reverse the order
