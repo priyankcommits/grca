@@ -9,6 +9,7 @@ const Admin = () => {
   const initialState = {
     name: null,
     cover: null,
+    coverName: null,
     file: null,
     error: null,
     loading: false,
@@ -70,7 +71,7 @@ const Admin = () => {
     reader.readAsDataURL(cover)
     reader.onload = () => {
       const coverBase64 = reader.result
-      setState((ps) => ({ ...ps, cover: coverBase64 }))
+      setState((ps) => ({ ...ps, cover: coverBase64, coverName: cover.name }))
     }
   }
 
@@ -214,7 +215,7 @@ const Admin = () => {
                 </div>
                 {state.cover && (
                   <p className="text-gray-500 text-sm my-2 ml-1">
-                    {state.cover?.name}
+                    {state.coverName}
                   </p>
                 )}
               </div>
