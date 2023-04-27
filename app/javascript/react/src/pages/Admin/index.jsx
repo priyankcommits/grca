@@ -50,6 +50,7 @@ const Admin = () => {
       setToast([{ message: response.message, type: 'success' }])
       setState({ ...initialState })
       setShowModal(false)
+      getBooks()
     } catch (error) {
       setShowModal(false)
       setToast([{ message: error, type: 'error' }])
