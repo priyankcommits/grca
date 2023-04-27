@@ -5,7 +5,7 @@ class BookQuestion < ApplicationRecord
   attribute :answer, :text, default: "Sorry I don't know the answer to that question."
   belongs_to :book
 
-  @@max_questions = 5
+  @@max_questions = 100
 
   def self.get_question(book_id)
     question_count = BookQuestion.where(book_id: book_id).count
