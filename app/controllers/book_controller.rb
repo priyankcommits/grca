@@ -119,14 +119,17 @@ class BookController < ApplicationController
         max_tokens: [max_bytes, 2000].min,
       }
     )
+    standard_answer = "Sorry, I don't know the answer to that question."
     if answer.key?("error")
-      render :json => {:answer => "Sorry, I don't know the answer to that question." }
+      render :json => {:answer => standard_answer }
     else
       answer = answer["choices"][0]["text"]
       answer = answer.gsub("\n", " ")
       answer = answer.gsub("b. ", " ")
       answer = answer.strip
       book_question.update(answer: answer)
+      if answer == ""
+        answer = standard_answer
       render :json => {:answer => answer }
     end
   end
