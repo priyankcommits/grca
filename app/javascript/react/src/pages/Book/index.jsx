@@ -59,10 +59,10 @@ const Book = () => {
     setState((ps) => ({ ...ps, loading: true }))
     try {
       const response = await askBook(book.id, state.queryText)
-      setState((ps) => ({ ...ps, answer: response.message }))
+      setState((ps) => ({ ...ps, answer: response.answer }))
       setShowAnswer(true)
       try {
-        speechSynthesis.speak(new SpeechSynthesisUtterance(response.message))
+        speechSynthesis.speak(new SpeechSynthesisUtterance(response.answer))
       } catch (error) {
         console.log(error)
       }
