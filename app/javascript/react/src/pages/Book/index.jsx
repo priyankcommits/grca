@@ -111,7 +111,7 @@ const Book = () => {
             <img
               src={book.cover}
               alt={book.name}
-              style={{ objectFit: 'cover' }}
+              style={{ objectFit: 'cover', maxHeight: 'calc(100vh - 60px)' }}
               className="h-auto"
             />
           )}

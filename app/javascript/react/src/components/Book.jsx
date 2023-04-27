@@ -36,11 +36,11 @@ const Book = (props) => {
           key={`${item.message}-${index}`}
         />
       ))}
-      <div className="rounded-lg border border-black">
+      <div className="border border-black">
         <a href={`/book?id=${book.id}`}>
           {book.cover && (
             <img
-              className="rounded-t-lg w-full h-auto"
+              className="w-full h-auto"
               src={`${book.cover}`}
               alt="Book Cover"
               style={{ height: '300px', objectFit: 'cover' }}
@@ -49,13 +49,13 @@ const Book = (props) => {
           {!book.cover && (
             <div
               style={{ height: '300px', objectFit: 'cover' }}
-              className="rounded-lg bg-gray-200 flex items-center justify-center text-black text-3xl font-bold"
+              className="bg-gray-200 flex items-center justify-center text-black text-3xl font-bold"
             >
               {calculateTextThubmnail(book.name)}
             </div>
           )}
         </a>
-        <div style={{ backgroundColor: bgColor }} className="p-2 rounded-b-lg">
+        <div style={{ backgroundColor: bgColor }} className="p-2">
           <h3 className="text-md font-bold text-white capitalize">
             <a href={`/book?id=${book.id}`}>{book.name}</a>
           </h3>
