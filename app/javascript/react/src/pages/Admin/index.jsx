@@ -108,7 +108,7 @@ const Admin = () => {
           </svg>
         </span>
       </button>
-      <div className="mt-5 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1 p-1">
+      <div className="mt-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-1 p-1">
         {books.map((book) => (
           <div className="w-full" key={book.id}>
             <Book bookUpdated={getBooks} type="admin" book={book} />
@@ -123,22 +123,24 @@ const Admin = () => {
           <div className="bg-white p-10 pt-4 max-w-md mx-auto overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Add New Book</h2>
             <div className="mb-4">
-              <label
-                htmlFor="name"
-                className="block text-gray-700 font-bold mb-2"
-              >
-                Book Name
-                <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="name"
-                type="text"
-                placeholder="Book Name"
-                className="w-full px-3 py-2 placeholder-gray-400 border border-black focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                onChange={(e) =>
-                  setState((ps) => ({ ...ps, name: e.target.value }))
-                }
-              />
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-gray-700 font-bold mb-2"
+                >
+                  Book Name
+                  <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="Book Name"
+                  className="w-full px-3 py-2 placeholder-gray-400 border border-black focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                  onChange={(e) =>
+                    setState((ps) => ({ ...ps, name: e.target.value }))
+                  }
+                />
+              </div>
               <label
                 htmlFor="file-upload"
                 className="mt-2 block text-gray-700 font-bold mb-2"
@@ -146,7 +148,7 @@ const Admin = () => {
                 Upload a PDF book
                 <span className="text-red-500">*</span>
               </label>
-              <div className="relative border-dashed border-2 border-gray-400 p-4">
+              <div className="relative border-dashed border-2 border-gray-400 p-4 cursor-pointer">
                 <input
                   id="file-upload"
                   type="file"
@@ -186,7 +188,7 @@ const Admin = () => {
               >
                 Upload a cover for the book
               </label>
-              <div className="relative border-dashed border-2 border-gray-400 p-4">
+              <div className="relative border-dashed border-2 border-gray-400 p-4 cursor-pointer">
                 <input
                   id="file-upload"
                   type="file"

@@ -15,12 +15,16 @@ class BookController < ApplicationController
     else
       cover_base64 = nil
     end
-    reader = PDF::Reader.new(file.path)
-    book = Book.create_book(book_name, cover_base64)
-    book_id = book.id
     pages_text = []
-    reader.pages.each do |page|
-      pages_text << page.text
+    begin
+      reader = PDF::Reader.new(file.path)
+      book = Book.create_book(book_name, cover_base64)
+      book_id = book.id
+      reader.pages.each do |page|
+        pages_text << page.text
+      end
+    rescue => exception
+      return render :json => {:message => "Error reading PDF file."}, status: :not_found
     end
     data = {:book_id => book_id, :pages => pages_text }
     BookProcessJob.perform_later data

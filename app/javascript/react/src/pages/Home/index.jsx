@@ -37,7 +37,7 @@ const Home = () => {
           key={`${item.message}-${index}`}
         />
       ))}
-      <div className="mt-5 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1 p-1">
+      <div className="mt-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-1 p-1">
         {books.map((book) => (
           <div className="w-full" key={book.id}>
             <Book type="user" book={book} />
