@@ -1,5 +1,4 @@
-require 'openai'
-require 'tokenizers'
+require_relative "../../lib/openai"
 
 class BookProcessJob < ApplicationJob
   queue_as :urgent
@@ -7,20 +6,12 @@ class BookProcessJob < ApplicationJob
   def perform(data)
     book_id = data[:book_id].to_i
     begin
-      client = OpenAI::Client.new(
-        access_token: ENV['OPENAI_API_KEY'],
-      )
-      tokenizer = Tokenizers.from_pretrained("gpt2")
+      openai_wrapper = OpenAiWrapper.new
       # Extract text from the PDF
       embeddings = []
       data[:pages].each do |page|
         sleep 2
-        embedding = client.embeddings(
-          parameters: {
-              model: "text-search-curie-doc-001",
-              input: tokenizer.encode(page).tokens.take(2046).join(" ")
-          }
-        )
+        embedding = openai_wrapper.create_embeddings("text-search-curie-doc-001", page)
         # check if data is in embedding
         if embedding.key?("data")
           embeddings << embedding["data"][0]["embedding"]

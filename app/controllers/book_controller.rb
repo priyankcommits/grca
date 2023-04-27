@@ -1,6 +1,6 @@
 require 'pdf-reader'
 require 'numo/narray'
-require 'tokenizers'
+require_relative "../../lib/openai"
 
 class BookController < ApplicationController
   protect_from_forgery with: :null_session
@@ -76,18 +76,13 @@ class BookController < ApplicationController
     unless is_new_question
       return render :json => {:answer => book_question.answer }
     end
-    client = OpenAI::Client.new(
-      access_token: ENV['OPENAI_API_KEY'],
-    )
-    tokenizer = Tokenizers.from_pretrained("gpt2")
+
+    openai_wrapper = OpenAiWrapper.new
+
     # Query the embedding using input text
-    input_embedding = client.embeddings(
-      parameters: {
-          model: "text-search-curie-query-001",
-          input: tokenizer.encode(query).tokens.take(2046).join(" ")
-      }
-    )
+    input_embedding = openai_wrapper.create_embeddings("text-search-curie-query-001", query)
     input = input_embedding["data"][0]["embedding"]
+
     similarity_scores = []
     embeddings.each do |embedding|
       if embedding.length != 4096
@@ -97,6 +92,7 @@ class BookController < ApplicationController
       score = (Numo::NArray[input] * (Numo::NArray[embedding])).sum
       similarity_scores << score
     end
+
     pages = JSON.parse(book_embeddings.pages)
     # order pages based on similarity score index
     similarity_scores = similarity_scores.map.with_index.sort.map(&:last)
@@ -108,20 +104,16 @@ class BookController < ApplicationController
 
     query_length = query.bytesize
 
-    max_bytes = 4090 - query_length
+    max_bytes = 2000 - query_length
     truncated_page_text = pages_text[0..max_bytes]
-
-    answer = client.completions(
-      parameters: {
-        model: "text-davinci-003",
-        prompt: truncated_page_text + "." + query,
-        temperature: 0.0,
-        max_tokens: [max_bytes, 2000].min,
-      }
+    answer = openai_wrapper.create_completion(
+      "text-search-curie-doc-001",
+      truncated_page_text + "." + query,
+      [max_bytes, 500].min,
     )
     standard_answer = "Sorry, I don't know the answer to that question."
     if answer.key?("error")
-      render :json => {:answer => standard_answer }
+      return render :json => {:answer => standard_answer }
     else
       answer = answer["choices"][0]["text"]
       answer = answer.gsub("\n", " ")

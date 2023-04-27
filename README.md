@@ -54,7 +54,7 @@ It has two modes, `Ask` is for asking a question by typing, `Feeling lucky` is t
  - API: Robust logging
  - API: DB audit logging when any object changes or updates
  - API: Paranoid deleting
- - API: Create lib for OpenAPI functionalities
+ - API: Create helper functions for dob product and pdf reader
  - CI/CD: Run test suite
  - CI/CD: Alerting when build fails
 
