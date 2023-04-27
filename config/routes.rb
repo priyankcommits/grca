@@ -11,8 +11,8 @@ Rails.application.routes.draw do
   patch 'api/v1/books/:id/status' => 'book#update_book_status'
   patch 'api/v1/books/:id/active' => 'book#update_book_active'
   post 'api/v1/books' => 'book#create'
-  post 'api/v1/books/:id/query/ask' => 'book#query_book'
-  post 'api/v1/books/:id/query/lucky' => 'book#query_book_lucky'
+  post 'api/v1/books/:id/query/ask' => 'book#ask_query_book'
+  post 'api/v1/books/:id/query/lucky' => 'book#lucky_query_book'
 
   root "home#index"
 end

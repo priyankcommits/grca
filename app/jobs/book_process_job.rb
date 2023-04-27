@@ -5,6 +5,7 @@ class BookProcessJob < ApplicationJob
   queue_as :urgent
 
   def perform(data)
+    book_id = data[:book_id].to_i
     begin
       client = OpenAI::Client.new(
         access_token: ENV['OPENAI_API_KEY'],
@@ -29,13 +30,11 @@ class BookProcessJob < ApplicationJob
       end
       json_embeddings = embeddings.to_json
       json_pages = data[:pages].to_json
-      book_id_integer = data[:book_id].to_i
-      BookEmbedding.create_book_embeddings(json_pages, json_embeddings, book_id_integer)
-      Book.update_book_status(book_id_integer, "processed")
+      BookEmbedding.create_book_embeddings(json_pages, json_embeddings, book_id)
+      Book.update_book_status(book_id, "processed")
     rescue => exception
-      puts "Error"
-      puts exception
-      Book.update_book_status(data[:book_id].to_i, "error")
+      puts "Failed to get embeddings data due to #{exception.message}"
+      Book.update_book_status(book_id, "error")
     end
   end
 end

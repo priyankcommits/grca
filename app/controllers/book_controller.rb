@@ -64,13 +64,13 @@ class BookController < ApplicationController
     render :json => book
   end
 
-  def query_book
+  def ask_query_book
     book = Book.get_book(params[:id])
     query = params[:query]
     unless query[-1] == '?'
       query += '?'
     end
-    book_embeddings = BookEmbedding.get_book_emb(book.id)
+    book_embeddings = BookEmbedding.get_book_embeddings(book.id)
     embeddings = JSON.parse(book_embeddings.embeddings)
     book_question, is_new_question = BookQuestion.question_asked(book.id, query)
     unless is_new_question
@@ -130,12 +130,13 @@ class BookController < ApplicationController
       book_question.update(answer: answer)
       if answer == ""
         answer = standard_answer
+      end
       render :json => {:answer => answer }
     end
   end
 
-    def query_book_lucky
-      question = BookQuestion.get_question(params[:id])
-      render :json => question
-    end
+  def lucky_query_book
+    question = BookQuestion.get_question(params[:id])
+    render :json => question
+  end
 end

@@ -13,7 +13,7 @@ class Book < ApplicationRecord
   end
 
   def self.get_book(book_id)
-    Book.find(id: book_id)
+    Book.find(book_id)
   end
 
   def self.get_books
@@ -25,12 +25,12 @@ class Book < ApplicationRecord
   end
 
   def self.update_book_active(book_id, is_active)
-    book = Book.find(id: book_id)
+    book = Book.find(book_id)
     book.update(is_active: is_active)
   end
 
   def self.update_book_status(book_id, status)
-    book = Book.find(id: book_id)
+    book = Book.find(book_id)
     book.update(status: status)
   end
 end

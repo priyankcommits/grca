@@ -43,7 +43,7 @@ class BookQuestion < ApplicationRecord
   end
 
   def self.remove_least_asked_question(book_id)
-    book_question = BookQuestion.find(book_id: book_id).order(:ask_count, :created_at).first
+    book_question = BookQuestion.find_by(book_id: book_id).order(:ask_count, :created_at).first
     book_question.destroy
   end
 

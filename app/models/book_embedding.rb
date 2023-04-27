@@ -8,7 +8,7 @@ class BookEmbedding < ApplicationRecord
     book_emb.save
   end
 
-  def self.get_book_emb(book_id)
-    BookEmbedding.find(book_id: book_id)
+  def self.get_book_embeddings(book_id)
+    BookEmbedding.find_by(book_id: book_id)
   end
 end

@@ -149,6 +149,7 @@ const Book = () => {
             </div>
           )}
         </div>
+        <div className="w-full h-64 md:hidden" />
       </div>
     </>
   )
