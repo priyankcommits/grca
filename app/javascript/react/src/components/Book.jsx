@@ -37,7 +37,7 @@ const Book = (props) => {
         />
       ))}
       <div className="border border-black">
-        <a href={`/book?id=${book.id}`}>
+        <a href={`/books?id=${book.id}`}>
           {book.cover && (
             <img
               className="w-full h-auto"
@@ -57,7 +57,7 @@ const Book = (props) => {
         </a>
         <div style={{ backgroundColor: bgColor }} className="p-2">
           <h3 className="text-md font-bold text-white capitalize">
-            <a href={`/book?id=${book.id}`}>{book.name}</a>
+            <a href={`/books?id=${book.id}`}>{book.name}</a>
           </h3>
           {type === 'admin' && (
             <div className="flex">

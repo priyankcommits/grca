@@ -1,7 +1,7 @@
 const BASE_URI = '/api/v1'
 
 export const getBook = async (bookId) => {
-  const response = await fetch(`${BASE_URI}/book?id=${bookId}`)
+  const response = await fetch(`${BASE_URI}/books?id=${bookId}`)
   const data = await response.json()
   if (!response.ok) throw data.message
   return data
@@ -15,7 +15,7 @@ export const getAllBooks = async () => {
 }
 
 export const getUserBooks = async () => {
-  const response = await fetch(`${BASE_URI}/books`)
+  const response = await fetch(`${BASE_URI}/books/user`)
   const data = await response.json()
   if (!response.ok) throw data.message
   return data
@@ -26,7 +26,7 @@ export const createBook = async (book) => {
   formData.append('name', book.name)
   if (book.cover) formData.append('cover', book.cover)
   formData.append('file', book.file)
-  const response = await fetch(`${BASE_URI}/book`, {
+  const response = await fetch(`${BASE_URI}/books`, {
     method: 'POST',
     body: formData,
   })
@@ -36,7 +36,7 @@ export const createBook = async (book) => {
 }
 
 export const updateBookActive = async (bookId, isActive) => {
-  const response = await fetch(`${BASE_URI}/book/${bookId}/active`, {
+  const response = await fetch(`${BASE_URI}/books/${bookId}/active`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export const updateBookActive = async (bookId, isActive) => {
 }
 
 export const updateBookStatus = async (bookId, status) => {
-  const response = await fetch(`${BASE_URI}/book/${bookId}/active`, {
+  const response = await fetch(`${BASE_URI}/books/${bookId}/active`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export const updateBookStatus = async (bookId, status) => {
 }
 
 export const askBook = async (bookId, query) => {
-  const response = await fetch(`${BASE_URI}/book/${bookId}/query/ask`, {
+  const response = await fetch(`${BASE_URI}/books/${bookId}/query/ask`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ export const askBook = async (bookId, query) => {
 }
 
 export const askBookLucky = async (bookId) => {
-  const response = await fetch(`${BASE_URI}/book/${bookId}/query/lucky`, {
+  const response = await fetch(`${BASE_URI}/books/${bookId}/query/lucky`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
