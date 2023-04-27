@@ -112,6 +112,7 @@ class BookController < ApplicationController
         model: "text-davinci-003",
         prompt: truncated_page_text + "." + query,
         temperature: 0.0,
+        max_tokens: [max_bytes, 2000].min,
       }
     )
     if answer.key?("error")
